@@ -64,21 +64,29 @@ with (Player) {
     
     playerNum += 1;
 }
+ds_map_add(statMap, 'players', playerNum);
 
-var key, str;
-str = '';
-// Iterate over headers map
+var key, queryString;
+queryString = '';
+// Iterate over stats map and build query string
 for (key = ds_map_find_first(statMap); is_string(key); key = ds_map_find_next(statMap, key))
 {
     var sanitised;
     sanitised = string(ds_map_find_value(statMap, key));
-    string_replace_all(sanitised, "&", "%26");
-    string_replace_all(sanitised, "=", "%3D");
+    sanitised = string_replace_all(sanitised, "&", "%26");
+    sanitised = string_replace_all(sanitised, "=", "%3D");
+    sanitised = string_replace_all(sanitised, " ", "%20");
+    sanitised = string_replace_all(sanitised, " ", "%20");
+    sanitised = string_replace_all(sanitised, chr(10), "%0A");
+    sanitised = string_replace_all(sanitised, chr(13), "%0D");
     if (key != ds_map_find_first(statMap))
-        str += "&";
-    str += key + "=" + sanitised;
+        queryString += "&";
+    queryString += key + "=" + sanitised;
 }
-show_message(str);
-show_message("length: " + string(string_length(str)));
-
 ds_map_destroy(statMap);
+
+// Create handler - a *persistent* instance that'll finish sending the request for us
+var handler;
+handler = instance_create(0, 0, global.StatsReporterRequestHandler);
+with (handler)
+    handle = httpGet(global.StatsReporterEndpoint + "?" + queryString, -1);
