@@ -66,9 +66,8 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
     ');
     printTable('player', '
         SELECT
-            gameId, player.id AS id, player.name AS name, team,
-            teamTypes.name AS teamName, class, classTypes.name as className,
-            queueJump
+            gameId, player.id AS id, team, teamTypes.name AS teamName, class,
+            classTypes.name as className, queueJump
         FROM
             player
         LEFT JOIN
@@ -152,7 +151,6 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
         $data['players'][] = [
             'team' => (int)$_GET[$prefix . 'team'],
             'class' => (int)$_GET[$prefix . 'class'],
-            'name' => $_GET[$prefix . 'name'],
             'queueJump' => (bool)(int)$_GET[$prefix . 'queueJump'],
             'stats' => $stats
         ];
@@ -203,17 +201,16 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
         $stmt = $PDO->prepare('
             INSERT INTO
                 player(
-                    gameId, id, name, team, class, queueJump
+                    gameId, id, team, class, queueJump
                 )
             VALUES
                 (
-                    :gameId, :id, :name, :team, :class, :queueJump
+                    :gameId, :id, :team, :class, :queueJump
                 );
         ');
         $stmt->execute([
             ':gameId' => $gameId,
             ':id' => $id,
-            ':name' => $player['name'],
             ':team' => $player['team'],
             ':class' => $player['class'],
             ':queueJump' => $player['queueJump']

@@ -1,5 +1,5 @@
 // ***
-// GG2 Stats reporting plugin v1 
+// GG2 Stats reporting plugin v1.1 
 // http://stats.ajf.me/
 // Part 2/2: Plugins\Stats\onroundend.gml
 // Copyright © 2013 Andrea Faulds
@@ -78,7 +78,6 @@ playerNum = 0;
 with (Player) {
     ds_map_add(statMap, 'player' + string(playerNum) + '_team', team);
     ds_map_add(statMap, 'player' + string(playerNum) + '_class', class);
-    ds_map_add(statMap, 'player' + string(playerNum) + '_name', name);
     ds_map_add(statMap, 'player' + string(playerNum) + '_queueJump', queueJump);
 
     // iterate over stats and build csv string

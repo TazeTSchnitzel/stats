@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS game (
 CREATE TABLE IF NOT EXISTS player (
     gameId          INTEGER NOT NULL,
     id              INTEGER NOT NULL,
-    name            STRING NOT NULL,
     team            INTEGER NOT NULL,
     class           INTEGER NOT NULL,
     queueJump       BOOLEAN NOT NULL,
