@@ -1,5 +1,6 @@
 // ***
-// GG2 Stats reporting plugin v1 
+// GG2 Stats reporting plugin v1
+// http://stats.ajf.me/
 // Part 1/2: Plugins\stats.gml
 // Copyright © 2013 Andrea Faulds
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,7 +27,7 @@
 
 // Run only when hosting
 
-global.StatsReporterEndpoint = "http://localhost:8000/";
+global.StatsReporterEndpoint = "http://stats.ajf.me/";
 
 global.StatsReporter = object_add();
 object_event_add(global.StatsReporter, ev_create, 0, '
