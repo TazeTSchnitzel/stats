@@ -50,6 +50,7 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
     echo '<meta charset=utf-8>' . PHP_EOL;
     echo '<title>GG2 Stat collection plugin</title>' . PHP_EOL;
     echo '<h1>GG2 Stat collection plugin</h1>' . PHP_EOL;
+    echo 'See <a href="http://www.ganggarrison.com/forums/index.php?topic=34728.0">the forum thread</a> for more info.' . PHP_EOL;
     printTable('game', '
         SELECT
             game.id AS gameId, version, serverName, serverIP, serverPort, map,
