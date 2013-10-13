@@ -72,9 +72,9 @@ if ($action === 'home') {
     printTable('game', '
         SELECT
             game.id AS gameId, version, serverName, serverIP, serverPort, map,
-            winner, teamTypes.name AS winnerName, gameMode,  timer, timeLimit,
-            respawnTime, controlPoints,  setupGate, capsRed, capsBlue, capLimit,
-            winsRed, winsBlue
+            teamTypes.name AS winner, gameMode, timer, timeLimit, respawnTime,
+            controlPoints,  setupGate, capsRed, capsBlue, capLimit, winsRed,
+            winsBlue
         FROM
             game
         LEFT JOIN
@@ -90,9 +90,9 @@ if ($action === 'home') {
     printTable('game', '
         SELECT
             game.id AS gameId, version, serverName, serverIP, serverPort, map,
-            winner, teamTypes.name AS winnerName, gameMode,  timer, timeLimit,
-            respawnTime, controlPoints,  setupGate, capsRed, capsBlue, capLimit,
-            winsRed, winsBlue
+            teamTypes.name AS winner, gameMode, timer, timeLimit, respawnTime,
+            controlPoints,  setupGate, capsRed, capsBlue, capLimit, winsRed,
+            winsBlue
         FROM
             game
         LEFT JOIN
@@ -106,8 +106,8 @@ if ($action === 'home') {
     ', [':gameId' => $gameId]);
     printTable('player', '
         SELECT
-            gameId, player.id AS id, team, teamTypes.name AS teamName, class,
-            classTypes.name as className, queueJump
+            gameId, player.id AS id, teamTypes.name AS team,
+            classTypes.name as class, queueJump
         FROM
             player
         LEFT JOIN
@@ -129,8 +129,8 @@ if ($action === 'home') {
     echo "<a href=/?action=game&gameId=$gameId>back</a>";
     printTable('player', '
         SELECT
-            gameId, player.id AS id, team, teamTypes.name AS teamName, class,
-            classTypes.name as className, queueJump
+            gameId, player.id AS id, teamTypes.name AS team,
+            classTypes.name as class, queueJump
         FROM
             player
         LEFT JOIN
@@ -149,7 +149,7 @@ if ($action === 'home') {
     ', [':gameId' => $gameId, ':playerId' => $playerId]);
     printTable('stat', '
         SELECT 
-            gameId, playerId, type, statTypes.name AS typeName, value
+            gameId, playerId, statTypes.name AS type, value
         FROM
             stat
         LEFT JOIN
