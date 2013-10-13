@@ -29,7 +29,7 @@ function printTable($name, $query) {
             foreach ($row as $value) {
                 echo '<td>';
                 if ($value === NULL) {
-                    echo '<em>N/A</em>';
+                    echo '<abbr title="Not Applicable" class=not-applicable>N/A</abbr>';
                 } else {
                     echo htmlspecialchars($value);
                 }

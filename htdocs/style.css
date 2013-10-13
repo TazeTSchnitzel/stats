@@ -50,3 +50,6 @@ td {
 td:nth-child(even) {
     background: rgb(246, 246, 246);
 }
+.not-applicable {
+    font-style: italic;
+}
