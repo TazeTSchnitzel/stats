@@ -1,15 +1,23 @@
 <?php
 
+$page_header = <<<HTML
+<!doctype html>
+<meta charset=utf-8>
+<title>GG2 Stat collection plugin</title>
+<link rel=stylesheet href=style.css>
+<div id=head><img src="http://static.ganggarrison.com/GG2ForumLogo.png" alt="" id=logo><img src="http://static.ganggarrison.com/Themes/GG2/images/smflogo.gif" alt="" id=smflogo></div>
+HTML;
+
 $dbSchema = file_get_contents('../schema.sql');
 
 $PDO = new PDO('sqlite:../stats.db');
 $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $PDO->exec($dbSchema);
 
-function printTable($name, $query) {
+function printTable($name, $query, $bindings, $link_column = NULL, $link_prefix = NULL) {
     global $PDO;
     $stmt = $PDO->prepare($query);
-    $stmt->execute();
+    $stmt->execute($bindings);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
     echo '<h2>' . htmlspecialchars($name) . '</h2>' . PHP_EOL;
     if (empty($rows)) {
@@ -26,12 +34,18 @@ function printTable($name, $query) {
         echo '<tbody>' . PHP_EOL;
         foreach ($rows as $row) {
             echo '<tr>' . PHP_EOL;
-            foreach ($row as $value) {
+            foreach ($row as $key => $value) {
                 echo '<td>';
+                if ($key === $link_column) {
+                    echo '<a href="' . $link_prefix . $value .'">';
+                }
                 if ($value === NULL) {
                     echo '<abbr title="Not Applicable" class=not-applicable>N/A</abbr>';
                 } else {
                     echo htmlspecialchars($value);
+                }
+                if ($key === $link_column) {
+                    echo '</a>';
                 }
                 echo '</td>' . PHP_EOL;
             }
@@ -44,15 +58,13 @@ function printTable($name, $query) {
 
 // *** Make sure this is a real request ***
 
+$action = isset($_GET['action']) ? $_GET['action'] : 'home';
+
 // This isn't exactly RESTful, is it?
 // TODO/FIXME: Make Hacker News happy.
-if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
-    // Presumably we want a nice stats output?
-    echo '<!doctype html>' . PHP_EOL;
-    echo '<meta charset=utf-8>' . PHP_EOL;
-    echo '<title>GG2 Stat collection plugin</title>' . PHP_EOL;
-    echo '<link rel=stylesheet href=style.css>' . PHP_EOL;
-    echo '<div id=head><img src="http://static.ganggarrison.com/GG2ForumLogo.png" alt="" id=logo><img src="http://static.ganggarrison.com/Themes/GG2/images/smflogo.gif" alt="" id=smflogo></div>' . PHP_EOL;
+if ($action === 'home') {
+    // Home page (game listing)
+    echo $page_header;
     echo '<div id=desc>' . PHP_EOL;
     echo '<p>GG2 Stat collection plugin data.</p>' . PHP_EOL;
     echo '<p>See <a href="http://www.ganggarrison.com/forums/index.php?topic=34728.0">the forum thread</a> for more info.</p>' . PHP_EOL;
@@ -69,7 +81,29 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
             teamTypes
         ON
             game.winner = teamTypes.id;
-    ');
+    ', [], 'gameId', '/?action=game&gameId=');
+} else if ($action === 'game') {
+    // Game page
+    $gameId = (int)$_GET['gameId'];
+    echo $page_header;
+    echo '<a href=/>back</a>';
+    printTable('game', '
+        SELECT
+            game.id AS gameId, version, serverName, serverIP, serverPort, map,
+            winner, teamTypes.name AS winnerName, gameMode,  timer, timeLimit,
+            respawnTime, controlPoints,  setupGate, capsRed, capsBlue, capLimit,
+            winsRed, winsBlue
+        FROM
+            game
+        LEFT JOIN
+            teamTypes
+        ON
+            game.winner = teamTypes.id
+        WHERE
+            gameId = :gameId
+        LIMIT
+            1;
+    ', [':gameId' => $gameId]);
     printTable('player', '
         SELECT
             gameId, player.id AS id, team, teamTypes.name AS teamName, class,
@@ -83,8 +117,36 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
         LEFT JOIN
             classTypes
         ON
-            player.class = classTypes.id;
-    ');
+            player.class = classTypes.id
+        WHERE
+            gameId = :gameId;
+    ', [':gameId' => $gameId], 'id', "/?action=player&gameId=$gameId&playerId=");
+} else if ($action === 'player') {
+    // Player page (stat listing)
+    $gameId = (int)$_GET['gameId'];
+    $playerId = (int)$_GET['playerId'];
+    echo $page_header;
+    echo "<a href=/?action=game&gameId=$gameId>back</a>";
+    printTable('player', '
+        SELECT
+            gameId, player.id AS id, team, teamTypes.name AS teamName, class,
+            classTypes.name as className, queueJump
+        FROM
+            player
+        LEFT JOIN
+            teamTypes
+        ON
+            player.team = teamTypes.id
+        LEFT JOIN
+            classTypes
+        ON
+            player.class = classTypes.id
+        WHERE
+            gameId = :gameId AND
+            player.id = :playerId
+        LIMIT
+            1;
+    ', [':gameId' => $gameId, ':playerId' => $playerId]);
     printTable('stat', '
         SELECT 
             gameId, playerId, type, statTypes.name AS typeName, value
@@ -93,8 +155,12 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
         LEFT JOIN
             statTypes
         ON
-            stat.type = statTypes.id;');
-} else {
+            stat.type = statTypes.id
+        WHERE
+            gameId = :gameId AND
+            playerId = :playerId;
+    ', [':gameId' => $gameId, ':playerId' => $playerId ]);
+} else if ($action === 'submit') {
     // Submit mode
     // *** Get data ***
 
