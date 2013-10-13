@@ -72,9 +72,10 @@ if ($action === 'home') {
     printTable('game', '
         SELECT
             timestamp, game.id AS gameId, version, serverName, serverIP,
-            serverPort,map, teamTypes.name AS winner, gameMode, timer,
-            timeLimit, respawnTime, controlPoints,  setupGate, capsRed,
-            capsBlue, capLimit
+            serverPort,map, teamTypes.name AS winner, gameMode,
+            (timer / 30) AS timer, (timeLimit / 30) AS timeLimit,
+            (respawnTime / 30) AS respawnTime, controlPoints, setupGate,
+            capsRed, capsBlue, capLimit
         FROM
             game
         LEFT JOIN
@@ -90,9 +91,10 @@ if ($action === 'home') {
     printTable('game', '
         SELECT
             timestamp, game.id AS gameId, version, serverName, serverIP,
-            serverPort,map, teamTypes.name AS winner, gameMode, timer,
-            timeLimit, respawnTime, controlPoints,  setupGate, capsRed,
-            capsBlue, capLimit
+            serverPort,map, teamTypes.name AS winner, gameMode,
+            (timer / 30) AS timer, (timeLimit / 30) AS timeLimit,
+            (respawnTime / 30) AS respawnTime, controlPoints, setupGate,
+            capsRed, capsBlue, capLimit
         FROM
             game
         LEFT JOIN
