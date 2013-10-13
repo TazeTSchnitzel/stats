@@ -8,17 +8,24 @@
 var statMap;
 statMap = ds_map_create();
 
+ds_map_add(statMap, 'version', VERSION);
 ds_map_add(statMap, 'serverName', global.serverName);
+ds_map_add(statMap, 'serverPort', global.hostingPort);
 ds_map_add(statMap, 'map', global.currentMap);
 ds_map_add(statMap, 'winners', global.winners);
 
 if (instance_exists(IntelligenceBaseBlue) || instance_exists(IntelligenceBaseRed)
     || instance_exists(IntelligenceRed) || instance_exists(IntelligenceBlue)) {
     ds_map_add(statMap, 'gameMode', 'ctf');
+    ds_map_add(statMap, 'caps0', global.redCaps);
+    ds_map_add(statMap, 'caps1', global.blueCaps);
+    ds_map_add(statMap, 'capLimit', global.caplimit);
 } else if (instance_exists(GeneratorBlue) || instance_exists(GeneratorRed)) {
     ds_map_add(statMap, 'gameMode', 'gen');
 } else if (instance_exists(ArenaControlPoint)) {
     ds_map_add(statMap, 'gameMode', 'arena');
+    ds_map_add(statMap, 'wins0', ArenaHUD.redWins);
+    ds_map_add(statMap, 'wins1', ArenaHUD.blueWins);
 } else if (instance_exists(KothControlPoint)) {
     ds_map_add(statMap, 'gameMode', 'koth');
 } else if (instance_exists(KothRedControlPoint) && instance_exists(KothBlueControlPoint)) {
@@ -31,13 +38,16 @@ if (instance_exists(IntelligenceBaseBlue) || instance_exists(IntelligenceBaseRed
     ds_map_add(statMap, 'gameMode', '?');
 }
 
-if instance_exists(ScorePanel){
-    ds_map_add(statMap, 'caps0', global.redCaps);
-    ds_map_add(statMap, 'caps1', global.blueCaps);
+if (ds_map_find_value(statMap, 'gameMode') == 'ctf'
+    or ds_map_find_value(statMap, 'gameMode') == 'cp'
+    or ds_map_find_value(statMap, 'gameMode') == 'arena'
+    or ds_map_find_value(statMap, 'gameMode') == 'gen'){
+    ds_map_add(statMap, 'timer', HUD.timer);
+    ds_map_add(statMap, 'timeLimit', HUD.timeLimit);
 }
-else if instance_exists(ArenaHUD){
-    ds_map_add(statMap, 'wins0', ArenaHUD.redWins);
-    ds_map_add(statMap, 'wins1', ArenaHUD.blueWins);
+
+if (ds_map_find_value(statMap, 'gameMode') != 'arena') {
+    ds_map_add(statMap, 'respawnTime', global.Server_Respawntime);
 }
 
 var teamCount, teamStats;
@@ -89,4 +99,4 @@ ds_map_destroy(statMap);
 var handler;
 handler = instance_create(0, 0, global.StatsReporterRequestHandler);
 with (handler)
-    handle = httpGet(global.StatsReporterEndpoint + "?" + queryString, -1);
+    handle = httpGet(global.StatsReporterEndpoint + "?action=submit&" + queryString, -1);
