@@ -25,13 +25,17 @@ function printTable($name, $query) {
         echo '</thead>' . PHP_EOL;
         echo '<tbody>' . PHP_EOL;
         foreach ($rows as $row) {
+            $even = FALSE;
             echo '<tr>' . PHP_EOL;
             foreach ($row as $value) {
+                echo $even ? '<td class=even>' : '<td>';
                 if ($value === NULL) {
-                    echo '<td><em>N/A</em></td>' . PHP_EOL;
+                    echo '<em>N/A</em>';
                 } else {
-                    echo '<td>' . htmlspecialchars($value) . '</td>' . PHP_EOL;
+                    echo htmlspecialchars($value);
                 }
+                echo '</td>' . PHP_EOL;
+                $even = !$even;
             }
             echo '</tr>' . PHP_EOL;
         }
@@ -49,8 +53,12 @@ if (!isset($_GET['action']) || $_GET['action'] !== 'submit') {
     echo '<!doctype html>' . PHP_EOL;
     echo '<meta charset=utf-8>' . PHP_EOL;
     echo '<title>GG2 Stat collection plugin</title>' . PHP_EOL;
-    echo '<h1>GG2 Stat collection plugin</h1>' . PHP_EOL;
-    echo 'See <a href="http://www.ganggarrison.com/forums/index.php?topic=34728.0">the forum thread</a> for more info.' . PHP_EOL;
+    echo '<link rel=stylesheet href=style.css>' . PHP_EOL;
+    echo '<div id=head><img src="http://static.ganggarrison.com/GG2ForumLogo.png" alt="" id=logo><img src="http://static.ganggarrison.com/Themes/GG2/images/smflogo.gif" alt="" id=smflogo></div>' . PHP_EOL;
+    echo '<div id=desc>' . PHP_EOL;
+    echo '<p>GG2 Stat collection plugin data.</p>' . PHP_EOL;
+    echo '<p>See <a href="http://www.ganggarrison.com/forums/index.php?topic=34728.0">the forum thread</a> for more info.</p>' . PHP_EOL;
+    echo '</div>';
     printTable('game', '
         SELECT
             game.id AS gameId, version, serverName, serverIP, serverPort, map,
