@@ -25,17 +25,15 @@ function printTable($name, $query) {
         echo '</thead>' . PHP_EOL;
         echo '<tbody>' . PHP_EOL;
         foreach ($rows as $row) {
-            $even = FALSE;
             echo '<tr>' . PHP_EOL;
             foreach ($row as $value) {
-                echo $even ? '<td class=even>' : '<td>';
+                echo '<td>';
                 if ($value === NULL) {
                     echo '<em>N/A</em>';
                 } else {
                     echo htmlspecialchars($value);
                 }
                 echo '</td>' . PHP_EOL;
-                $even = !$even;
             }
             echo '</tr>' . PHP_EOL;
         }

@@ -47,6 +47,6 @@ tr {
 td {
     padding: 5px;
 }
-.even {
+td:nth-child(even) {
     background: rgb(246, 246, 246);
 }
