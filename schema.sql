@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS game (
     id              INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp       DATETIME NOT NULL,
     version         INTEGER NOT NULL,
     serverName      STRING NOT NULL,
     serverIP        STRING NOT NULL,

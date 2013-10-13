@@ -71,9 +71,10 @@ if ($action === 'home') {
     echo '</div>';
     printTable('game', '
         SELECT
-            game.id AS gameId, version, serverName, serverIP, serverPort, map,
-            teamTypes.name AS winner, gameMode, timer, timeLimit, respawnTime,
-            controlPoints,  setupGate, capsRed, capsBlue, capLimit
+            timestamp, game.id AS gameId, version, serverName, serverIP,
+            serverPort,map, teamTypes.name AS winner, gameMode, timer,
+            timeLimit, respawnTime, controlPoints,  setupGate, capsRed,
+            capsBlue, capLimit
         FROM
             game
         LEFT JOIN
@@ -88,9 +89,10 @@ if ($action === 'home') {
     echo '<a href=/>back</a>';
     printTable('game', '
         SELECT
-            game.id AS gameId, version, serverName, serverIP, serverPort, map,
-            teamTypes.name AS winner, gameMode, timer, timeLimit, respawnTime,
-            controlPoints,  setupGate, capsRed, capsBlue, capLimit
+            timestamp, game.id AS gameId, version, serverName, serverIP,
+            serverPort,map, teamTypes.name AS winner, gameMode, timer,
+            timeLimit, respawnTime, controlPoints,  setupGate, capsRed,
+            capsBlue, capLimit
         FROM
             game
         LEFT JOIN
@@ -196,7 +198,7 @@ if ($action === 'home') {
     if (isset($_GET['caps0'])) {
         $data['caps'][0] = (int)$_GET['caps0'];
         $data['caps'][1] = (int)$_GET['caps1'];
-    } else if ($_GET['wins0'])) {
+    } else if (isset($_GET['wins0'])) {
         $data['caps'][0] = (int)$_GET['wins0'];
         $data['caps'][1] = (int)$_GET['wins1'];
     } else {
@@ -233,15 +235,16 @@ if ($action === 'home') {
     $stmt = $PDO->prepare('
         INSERT INTO
             game(
-                version, serverName, serverIP, serverPort, map, winner,
+                timestamp, version, serverName, serverIP, serverPort, map, winner,
                 gameMode, timer, timeLimit, respawnTime, controlPoints,
                 setupGate, capsRed, capsBlue,  capLimit
             )
         VALUES
             (
-                :version, :serverName, :serverIP, :serverPort, :map, :winner,
-                :gameMode, :timer, :timeLimit, :respawnTime, :controlPoints,
-                :setupGate, :capsRed, :capsBlue, :capLimit
+                datetime(\'now\'), :version, :serverName, :serverIP,
+                :serverPort, :map, :winner, :gameMode, :timer, :timeLimit,
+                :respawnTime, :controlPoints, :setupGate, :capsRed, :capsBlue,
+                :capLimit
             );
     ');
     $stmt->execute([
