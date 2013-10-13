@@ -165,9 +165,4 @@ foreach ($data['players'] as $id => $player) {
 
 $PDO->commit();
 
-ob_start();
-var_export($data);
-error_log(ob_get_flush());
-ob_clean();
-
 echo "SUCCESS";
