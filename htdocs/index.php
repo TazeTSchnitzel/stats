@@ -73,8 +73,7 @@ if ($action === 'home') {
         SELECT
             game.id AS gameId, version, serverName, serverIP, serverPort, map,
             teamTypes.name AS winner, gameMode, timer, timeLimit, respawnTime,
-            controlPoints,  setupGate, capsRed, capsBlue, capLimit, winsRed,
-            winsBlue
+            controlPoints,  setupGate, capsRed, capsBlue, capLimit
         FROM
             game
         LEFT JOIN
@@ -91,8 +90,7 @@ if ($action === 'home') {
         SELECT
             game.id AS gameId, version, serverName, serverIP, serverPort, map,
             teamTypes.name AS winner, gameMode, timer, timeLimit, respawnTime,
-            controlPoints,  setupGate, capsRed, capsBlue, capLimit, winsRed,
-            winsBlue
+            controlPoints,  setupGate, capsRed, capsBlue, capLimit
         FROM
             game
         LEFT JOIN
@@ -198,18 +196,17 @@ if ($action === 'home') {
     if (isset($_GET['caps0'])) {
         $data['caps'][0] = (int)$_GET['caps0'];
         $data['caps'][1] = (int)$_GET['caps1'];
-        $data['capLimit'] = (int)$_GET['capLimit'];
+    } else if ($_GET['wins0'])) {
+        $data['caps'][0] = (int)$_GET['wins0'];
+        $data['caps'][1] = (int)$_GET['wins1'];
     } else {
         $data['caps'][0] = NULL;
         $data['caps'][1] = NULL;
-        $data['capLimit'] = NULL;
     }
-    if (isset($_GET['wins0'])) {
-        $data['wins'][0] = (int)$_GET['wins0'];
-        $data['wins'][1] = (int)$_GET['wins1'];
+    if (isset($_GET['capLimit'])) {
+        $data['capLimit'] = (int)$_GET['capLimit'];
     } else {
-        $data['wins'][0] = NULL;
-        $data['wins'][1] = NULL;
+        $data['capLimit'] = NULL;
     }
 
     $playerCount = (int)$_GET['players'];
@@ -238,13 +235,13 @@ if ($action === 'home') {
             game(
                 version, serverName, serverIP, serverPort, map, winner,
                 gameMode, timer, timeLimit, respawnTime, controlPoints,
-                setupGate, capsRed, capsBlue,  capLimit, winsRed, winsBlue
+                setupGate, capsRed, capsBlue,  capLimit
             )
         VALUES
             (
                 :version, :serverName, :serverIP, :serverPort, :map, :winner,
                 :gameMode, :timer, :timeLimit, :respawnTime, :controlPoints,
-                :setupGate, :capsRed, :capsBlue, :capLimit, :winsRed, :winsBlue
+                :setupGate, :capsRed, :capsBlue, :capLimit
             );
     ');
     $stmt->execute([
@@ -262,9 +259,7 @@ if ($action === 'home') {
         ':setupGate' => $data['setupGate'],
         ':capsRed' => $data['caps'][0],
         ':capsBlue' => $data['caps'][1],
-        ':capLimit' => $data['capLimit'],
-        ':winsRed' => $data['wins'][0],
-        ':winsBlue' => $data['wins'][1]
+        ':capLimit' => $data['capLimit']
     ]);
     $gameId = $PDO->lastInsertId();
 

@@ -1,5 +1,5 @@
 // ***
-// GG2 Stats reporting plugin v1.1 
+// GG2 Stats reporting plugin v1.2
 // http://stats.ajf.me/
 // Part 2/2: Plugins\Stats\onroundend.gml
 // Copyright © 2013 Andrea Faulds
@@ -44,8 +44,8 @@ if (instance_exists(IntelligenceBaseBlue) || instance_exists(IntelligenceBaseRed
     ds_map_add(statMap, 'gameMode', 'gen');
 } else if (instance_exists(ArenaControlPoint)) {
     ds_map_add(statMap, 'gameMode', 'arena');
-    ds_map_add(statMap, 'wins0', ArenaHUD.redWins);
-    ds_map_add(statMap, 'wins1', ArenaHUD.blueWins);
+    ds_map_add(statMap, 'caps0', ArenaHUD.redWins);
+    ds_map_add(statMap, 'caps1', ArenaHUD.blueWins);
 } else if (instance_exists(KothControlPoint)) {
     ds_map_add(statMap, 'gameMode', 'koth');
 } else if (instance_exists(KothRedControlPoint) && instance_exists(KothBlueControlPoint)) {

@@ -1,5 +1,5 @@
 // ***
-// GG2 Stats reporting plugin v1.1
+// GG2 Stats reporting plugin v1.2
 // http://stats.ajf.me/
 // Part 1/2: Plugins\stats.gml
 // Copyright © 2013 Andrea Faulds

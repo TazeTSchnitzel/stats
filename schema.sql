@@ -15,8 +15,6 @@ CREATE TABLE IF NOT EXISTS game (
     capsRed         INTEGER,
     capsBlue        INTEGER,
     capLimit        INTEGER,
-    winsRed         INTEGER,
-    winsBlue        INTEGER,
     CONSTRAINT game_winner_teamTypes_id FOREIGN KEY (winner) REFERENCES teamTypes(id)
 );
 
