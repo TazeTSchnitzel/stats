@@ -1,0 +1,18 @@
+server {
+    server_name stats.ajf.me;
+
+    access_log  /var/log/nginx/stats.ajf.me.access.log;
+    
+    root    /var/www/stats.ajf.me;
+
+    location / {
+        index   index.php;
+    }
+
+    location ~ \.php$ {
+	fastcgi_pass   unix:/var/run/php5-fpm.sock;
+	fastcgi_index  index.php;
+	fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+	include fastcgi_params;
+    }
+}
