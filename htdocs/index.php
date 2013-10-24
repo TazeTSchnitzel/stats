@@ -14,11 +14,12 @@ $PDO = new PDO('sqlite:../stats.db');
 $PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $PDO->exec($dbSchema);
 
-function printTable($name, $query, $bindings, $link_column = NULL, $link_prefix = NULL) {
+function printTable($name, $query, $bindings, $link_column = NULL, $link_prefix = NULL, &$rows_returned) {
     global $PDO;
     $stmt = $PDO->prepare($query);
     $stmt->execute($bindings);
     $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $rows_returned = count($rows);
     echo '<h2>' . htmlspecialchars($name) . '</h2>' . PHP_EOL;
     if (empty($rows)) {
         echo '<em>There doesn\'t appear to be anything here.</em>' . PHP_EOL;
@@ -63,12 +64,14 @@ $action = isset($_GET['action']) ? $_GET['action'] : 'home';
 // This isn't exactly RESTful, is it?
 // TODO/FIXME: Make Hacker News happy.
 if ($action === 'home') {
+    $offset = (isset($_GET['offset']) ? (int)$_GET['offset'] : 0);
     // Home page (game listing)
     echo $page_header;
     echo '<div id=desc>' . PHP_EOL;
     echo '<p>GG2 Stat collection plugin data.</p>' . PHP_EOL;
     echo '<p>See <a href="http://www.ganggarrison.com/forums/index.php?topic=34728.0">the forum thread</a> for more info.</p>' . PHP_EOL;
     echo '</div>';
+    $rows = NULL;
     printTable('game', '
         SELECT
             timestamp, game.id AS gameId, version, serverName, serverIP,
@@ -81,8 +84,22 @@ if ($action === 'home') {
         LEFT JOIN
             teamTypes
         ON
-            game.winner = teamTypes.id;
-    ', [], 'gameId', '/?action=game&gameId=');
+            game.winner = teamTypes.id
+        ORDER BY
+            timestamp DESC
+        LIMIT
+            25
+        OFFSET
+            :offset;
+    ', [':offset' => $offset], 'gameId', '/?action=game&gameId=', $rows);
+    if ($offset > 0) {
+        $offset_prev = $offset - 25;
+        echo "<a href=\"/?offset=$offset_prev\">Prev</a>" . PHP_EOL;
+    }
+    if ($rows === 25) {
+        $offset_next = $offset + 25;
+        echo "<a href=\"/?offset=$offset_next\">Next</a>" . PHP_EOL;
+    }
 } else if ($action === 'game') {
     // Game page
     $gameId = (int)$_GET['gameId'];
