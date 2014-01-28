@@ -52,16 +52,16 @@ object_event_add(global.StatsReporterRequestHandler, ev_create, 0, '
     handle = -1;
 ');
 object_event_add(global.StatsReporterRequestHandler, ev_step, ev_step_begin, '
-    httpRequestStep(handle);
+    http_step(handle);
     
     var status;
-    status = httpRequestStatus(handle);
+    status = http_status_code(handle);
     
     // Request failed
     if (status == 2)
     {
         // Give up
-        httpRequestDestroy(handle);
+        http_destroy(handle);
         instance_destroy();
         exit;
     }
@@ -69,21 +69,21 @@ object_event_add(global.StatsReporterRequestHandler, ev_step, ev_step_begin, '
     else if (status == 1)
     {    
         var statusCode;
-        statusCode = httpRequestStatusCode(handle);
+        statusCode = http_status_code(handle);
     
         // Request failed
         if (statusCode != 200)
         {
             // Give up
-            httpRequestDestroy(handle);
+            http_destroy(handle);
             instance_destroy();
             exit;
         }
     
         var data;
-        data = httpRequestResponseBody(handle);
+        data = http_response_body(handle);
         data = read_string(data, buffer_size(data));
-        httpRequestDestroy(handle);
+        http_destroy(handle);
     
         if (data != "SUCCESS") {
             // Failure, give up
