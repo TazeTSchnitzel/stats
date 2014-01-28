@@ -118,4 +118,4 @@ ds_map_destroy(statMap);
 var handler;
 handler = instance_create(0, 0, global.StatsReporterRequestHandler);
 with (handler)
-    handle = httpGet(global.StatsReporterEndpoint + "?action=submit&" + queryString, -1);
+    handle = http_new_get(global.StatsReporterEndpoint + "?action=submit&" + queryString, -1);
