@@ -52,28 +52,10 @@ object_event_add(global.StatsReporterRequestHandler, ev_create, 0, '
     handle = -1;
 ');
 object_event_add(global.StatsReporterRequestHandler, ev_step, ev_step_begin, '
-    http_step(handle);
-    
-    var status;
-    status = http_status_code(handle);
-    
-    // Request failed
-    if (status == 2)
-    {
-        // Give up
-        http_destroy(handle);
-        instance_destroy();
-        exit;
-    }
-    // Request finished
-    else if (status == 1)
-    {    
-        var statusCode;
-        statusCode = http_status_code(handle);
-    
+    // End of request
+    if (http_step(handle)) {
         // Request failed
-        if (statusCode != 200)
-        {
+        if (http_status_code(handle) != 200) {
             // Give up
             http_destroy(handle);
             instance_destroy();
